@@ -9,7 +9,8 @@ import java.util.List;
 
 public class AsciiLoader {
 
-    private static final String RESOURCE_PATH = "/ressources/";
+    private static final String RESOURCE_PATH = "/";
+
     public static List<String> loadAsciiFile(String fileName) {
         List<String> lines = new ArrayList<>();
 

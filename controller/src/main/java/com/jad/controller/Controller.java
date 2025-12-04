@@ -25,15 +25,14 @@ public class Controller implements IController {
     @Override
     public void start() {
         view.clear();
-        view.display("╔═══════════════════════════════════════════════════╗");
-        view.display("║   BIENVENUE DANS LE CONFIGURATEUR DE TUNING !   ║");
-        view.display("╚═══════════════════════════════════════════════════╝");
+
+        view.display(" BIENVENUE DANS LE CONFIGURATEUR DE JACKYTOUCH TUNING !");
 
         while (running) {
             showMainMenu();
         }
 
-        view.display("\n👋 Merci d'avoir utilisé le configurateur. À bientôt !\n");
+        view.display("\nMerci d'avoir utilisé le configurateur. À bientôt !\n");
     }
 
     private void showMainMenu() {
@@ -136,7 +135,7 @@ public class Controller implements IController {
     private void changeSettingFor(String tuningName) {
         view.clear();
 
-       
+
         Tuning tuning = ((Car) car).getTuning(tuningName);
 
         if (tuning == null) {

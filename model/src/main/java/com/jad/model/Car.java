@@ -5,8 +5,10 @@ import com.jad.model.service.AsciiLoader;
 import com.jad.model.tuning.*;
 import com.jad.share.ICar;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Car implements ICar {
 
@@ -96,14 +98,14 @@ public class Car implements ICar {
     public String getConfigurationLog() {
         StringBuilder log = new StringBuilder();
 
-        log.append("\n=== EFFETS MÉCANIQUES ===\n");
+        log.append("\nEFFETS MÉCANIQUES\n");
         for (Tuning tuning : availableTunings.values()) {
             if (tuning.isActive()) {
                 log.append("> ").append(tuning.getCurrentSetting().getEffect()).append("\n");
             }
         }
 
-        log.append("\n=== CONFIGURATION ===\n");
+        log.append("\nCONFIGURATION\n");
         for (Tuning tuning : availableTunings.values()) {
             if (tuning.isActive()) {
                 log.append(tuning.toString()).append("\n");

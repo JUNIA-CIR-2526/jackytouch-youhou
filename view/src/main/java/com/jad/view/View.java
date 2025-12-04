@@ -20,9 +20,9 @@ public class View implements IView {
 
     @Override
     public void displayCar(List<String> asciiLines) {
-        System.out.println("\n╔════════════════════════════════════════╗");
-        System.out.println("║          VOTRE VOITURE TUNING          ║");
-        System.out.println("╚════════════════════════════════════════╝\n");
+
+        System.out.println("VOTRE VOITURE TUNING");
+
 
         for (String line : asciiLines) {
             System.out.println(line);
@@ -33,9 +33,7 @@ public class View implements IView {
 
     @Override
     public int displayMenu(String title, List<String> options) {
-        System.out.println("\n" + "=".repeat(50));
         System.out.println(title);
-        System.out.println("=".repeat(50));
 
         for (int i = 0; i < options.size(); i++) {
             System.out.printf("%d. %s%n", i + 1, options.get(i));
@@ -61,10 +59,10 @@ public class View implements IView {
                 if (value >= min && value <= max) {
                     return value;
                 } else {
-                    System.out.printf("⚠ Veuillez entrer un nombre entre %d et %d.%n", min, max);
+                    System.out.printf("Veuillez entrer un nombre entre %d et %d.%n", min, max);
                 }
             } catch (NumberFormatException e) {
-                System.out.println("⚠ Entrée invalide. Veuillez entrer un nombre.");
+                System.out.println(" Entrée invalide. Veuillez entrer un nombre.");
             }
         }
     }
@@ -85,12 +83,13 @@ public class View implements IView {
             }
         }
     }
+
     public void displayError(String message) {
-        System.err.println("\n❌ ERREUR : " + message + "\n");
+        System.err.println("\nERREUR : " + message + "\n");
     }
 
     public void displaySuccess(String message) {
-        System.out.println("\n✓ " + message + "\n");
+        System.out.println("\n GOOD" + message + "\n");
     }
 
     public void waitForEnter() {
