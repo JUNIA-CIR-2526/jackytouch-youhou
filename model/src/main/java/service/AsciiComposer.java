@@ -10,15 +10,49 @@ public class AsciiComposer {
             return new ArrayList<>();
         }
 
-        List<String> result = new ArrayList<>(layers.get(0));
 
-        for (int layerIndex = 1; layerIndex < layers.size(); layerIndex++) {
-            List<String> currentLayer = layers.get(layerIndex);
+        int maxWidth = 0;
+        for (List<String> layer : layers) {
+            for (String line : layer) {
+                maxWidth = Math.max(maxWidth, line.length());
+            }
+        }
+
+
+        List<List<String>> normalizedLayers = new ArrayList<>();
+        for (List<String> layer : layers) {
+            normalizedLayers.add(normalizeLinesWidth(layer, maxWidth));
+        }
+
+
+        List<String> result = new ArrayList<>(normalizedLayers.get(0));
+
+
+        for (int layerIndex = 1; layerIndex < normalizedLayers.size(); layerIndex++) {
+            List<String> currentLayer = normalizedLayers.get(layerIndex);
             result = overlayLayer(result, currentLayer);
         }
 
         return result;
     }
+
+
+    private static List<String> normalizeLinesWidth(List<String> lines, int width) {
+        List<String> normalized = new ArrayList<>();
+        for (String line : lines) {
+            if (line.length() < width) {
+
+                normalized.add(line + " ".repeat(width - line.length()));
+            } else if (line.length() > width) {
+
+                normalized.add(line.substring(0, width));
+            } else {
+                normalized.add(line);
+            }
+        }
+        return normalized;
+    }
+
 
     private static List<String> overlayLayer(List<String> base, List<String> overlay) {
         List<String> result = new ArrayList<>();
@@ -34,6 +68,7 @@ public class AsciiComposer {
 
         return result;
     }
+
     private static String mergeLine(String baseLine, String overlayLine) {
         StringBuilder result = new StringBuilder();
 
@@ -47,12 +82,14 @@ public class AsciiComposer {
             if (isTransparent(overlayChar)) {
                 result.append(baseChar);
             } else {
+
                 result.append(overlayChar);
             }
         }
 
         return result.toString();
     }
+
 
     private static boolean isTransparent(char c) {
         return c == ' ' || c == '.';

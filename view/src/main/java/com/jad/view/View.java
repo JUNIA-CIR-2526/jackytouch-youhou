@@ -2,98 +2,139 @@ package com.jad.view;
 
 import com.jad.share.IView;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
+import java.util.Map;
+import java.util.Optional;
 
 public class View implements IView {
 
-    private Scanner scanner;
+    public static final int WAITING_TIME = 50;
+
+    private JFrame frame;
+    private JTextArea textArea;
+    private Map<String, Boolean> actionStates;
+    private Map<Integer, Runnable> keyActions;
 
     public View() {
-        this.scanner = new Scanner(System.in);
+        this.actionStates = new HashMap<>();
+        this.keyActions = new HashMap<>();
+        initializeWindow();
+    }
+
+    private void initializeWindow() {
+        frame = new JFrame("JackyTouch Tuning");
+        textArea = new JTextArea(20, 60);
+        textArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
+        textArea.setEditable(false);
+        textArea.setFocusable(true);
+
+        frame.add(new JScrollPane(textArea));
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
+
+        actionStates.put("Proceed", false);
+        actionStates.put("Quit", false);
+
+        textArea.requestFocusInWindow();
+    }
+
+
+    public void addKeyboardListener(int keyCode, String action) {
+
+        keyActions.put(keyCode, () -> actionStates.put(action, true));
+
+
+        keyActions.put(KeyEvent.VK_ESCAPE, () -> actionStates.put("Quit", true));
+
+        textArea.addKeyListener(new KeyListener() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+                Optional.ofNullable(keyActions.get(e.getKeyCode()))
+                        .ifPresent(Runnable::run);
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+            }
+
+            @Override
+            public void keyTyped(KeyEvent e) {
+            }
+        });
+    }
+
+
+    public boolean isOff(String action) {
+        return !actionStates.getOrDefault(action, false);
+    }
+
+
+    public void resetAction(String action) {
+        actionStates.put(action, false);
+    }
+
+
+    public void waitForAction(String action) {
+        while (isOff(action)) {
+            try {
+                Thread.sleep(WAITING_TIME);
+            } catch (InterruptedException exception) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+    }
+
+
+    public boolean isQuitRequested() {
+        return actionStates.getOrDefault("Quit", false);
     }
 
     @Override
     public void display(String message) {
-        System.out.println(message);
+        textArea.setText(message);
     }
 
     @Override
     public void displayCar(List<String> asciiLines) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n");
+        asciiLines.forEach(line -> sb.append(line).append("\n"));
+        textArea.setText(sb.toString());
+    }
 
-        System.out.println("VOTRE VOITURE TUNING");
-
-
-        for (String line : asciiLines) {
-            System.out.println(line);
-        }
-
-        System.out.println();
+    public void displayCarWithDescription(List<String> asciiLines, String description) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n=== JACKYTOUCH TUNING ===\n\n");
+        asciiLines.forEach(line -> sb.append(line).append("\n"));
+        sb.append("\n").append(description).append("\n");
+        textArea.setText(sb.toString());
     }
 
     @Override
     public int displayMenu(String title, List<String> options) {
-        System.out.println(title);
-
-        for (int i = 0; i < options.size(); i++) {
-            System.out.printf("%d. %s%n", i + 1, options.get(i));
-        }
-
-        return readInt("\nVotre choix : ", 1, options.size()) - 1;
+        return 0;
     }
 
     @Override
     public String readInput(String prompt) {
-        System.out.print(prompt);
-        return scanner.nextLine().trim();
+        return "";
     }
 
     @Override
     public int readInt(String prompt, int min, int max) {
-        while (true) {
-            try {
-                System.out.print(prompt);
-                String input = scanner.nextLine().trim();
-                int value = Integer.parseInt(input);
-
-                if (value >= min && value <= max) {
-                    return value;
-                } else {
-                    System.out.printf("Veuillez entrer un nombre entre %d et %d.%n", min, max);
-                }
-            } catch (NumberFormatException e) {
-                System.out.println(" Entrée invalide. Veuillez entrer un nombre.");
-            }
-        }
+        return 0;
     }
 
     @Override
     public void clear() {
-        try {
-            if (System.getProperty("os.name").contains("Windows")) {
-                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-            } else {
-                System.out.print("\033[H\033[2J");
-                System.out.flush();
-            }
-        } catch (Exception e) {
-
-            for (int i = 0; i < 50; i++) {
-                System.out.println();
-            }
-        }
-    }
-
-    public void displayError(String message) {
-        System.err.println("\nERREUR : " + message + "\n");
-    }
-
-    public void displaySuccess(String message) {
-        System.out.println("\n GOOD" + message + "\n");
-    }
-
-    public void waitForEnter() {
-        System.out.print("\nAppuyez sur Entrée pour continuer...");
-        scanner.nextLine();
+        textArea.setText("");
     }
 }
